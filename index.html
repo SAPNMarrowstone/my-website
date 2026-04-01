@@ -1,58 +1,47 @@
-!DOCTYPE html
-html
-head
-  titleName Pronunciation Directorytitle
-  style
-    body {
-      font-family Arial;
-      max-width 800px;
-      margin auto;
-    }
-    .player {
-      border 1px solid #ccc;
-      padding 10px;
-      margin 10px 0;
-    }
-  style
-head
-body
 
-h1Player Name Pronunciationsh1
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Name Pronunciation Directory</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: auto; padding: 20px; }
+    .player { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; }
+  </style>
+</head>
+<body>
 
-h2Add Playerh2
+<h1>Player Name Pronunciations</h1>
+<h2>Add Player</h2>
 
-input id=name placeholder=Player Namebrbr
-input id=phonetic placeholder=Phonetic Pronunciationbrbr
-select id=league
-  optionNFLoption
-  optionNBAoption
-  optionMLBoption
-selectbrbr
+<input id="name" placeholder="Player Name"><br><br>
+<input id="phonetic" placeholder="Phonetic Pronunciation"><br><br>
+<select id="league">
+  <option>NFL</option>
+  <option>NBA</option>
+  <option>MLB</option>
+</select><br><br>
 
-input type=file id=audiobrbr
+<input type="file" id="audio" accept="audio/*"><br><br>
+<button onclick="addPlayer()">Add Player</button>
 
-button onclick=addPlayer()Add Playerbutton
+<h2>Directory</h2>
+<div id="players"></div>
 
-h2Directoryh2
-
-div id=playersdiv
-
-script
+<script>
 let players = [];
 
 function addPlayer() {
-  const name = document.getElementById(name).value;
-  const phonetic = document.getElementById(phonetic).value;
-  const league = document.getElementById(league).value;
-  const file = document.getElementById(audio).files[0];
+  const name = document.getElementById('name').value;
+  const phonetic = document.getElementById('phonetic').value;
+  const league = document.getElementById('league').value;
+  const file = document.getElementById('audio').files[0];
 
-  if (!file) {
-    alert(Upload an audio file);
+  if (!name || !file) {
+    alert("Please enter a name and upload an audio file");
     return;
   }
 
   const audioURL = URL.createObjectURL(file);
-
   const player = { name, phonetic, league, audioURL };
   players.push(player);
 
@@ -60,20 +49,21 @@ function addPlayer() {
 }
 
 function renderPlayers() {
-  const container = document.getElementById(players);
-  container.innerHTML = ;
+  const container = document.getElementById('players');
+  container.innerHTML = '';
 
-  players.forEach(p = {
+  players.forEach(p => {
     container.innerHTML += `
-      div class=player
-        strong${p.name}strong (${p.league})br
-        em${p.phonetic}embr
-        audio controls src=${p.audioURL}audio
-      div
+      <div class="player">
+        <strong>${p.name}</strong> (${p.league})<br>
+        <em>${p.phonetic}</em><br>
+        <audio controls src="${p.audioURL}"></audio>
+      </div>
     `;
   });
 }
-script
+</script>
 
-body
-html
+</body>
+</html>
+
