@@ -36,6 +36,19 @@
             }
         }
     </script>
-
+    <script>
+  function addPlayer() {
+    const nameInput = document.getElementById('playerName');
+    const list = document.getElementById('playerList');
+   
+    if (nameInput.value !== "") {
+      const newEntry = document.createElement('li');
+      newEntry.textContent = nameInput.value;
+      list.appendChild(newEntry);
+      nameInput.value = ""; // Clears the box after adding
+    }
+  }
+</script>
+    
 </body>
 </html>
