@@ -1,69 +1,41 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Name Pronunciation Directory</title>
-  <style>
-    body { font-family: Arial; max-width: 800px; margin: auto; padding: 20px; }
-    .player { border: 1px solid #ccc; padding: 10px; margin: 10px 0; border-radius: 8px; }
-  </style>
+    <title>My Player Site</title>
+    <style>
+        /* This is optional CSS to make it look a bit cleaner */
+        body { font-family: sans-serif; padding: 20px; }
+        #playerList { margin-top: 10px; }
+    </style>
 </head>
 <body>
 
-<h1>Player Name Pronunciations</h1>
-<h2>Add Player</h2>
+    <h1>My Website</h1>
 
-<input id="name" placeholder="Player Name"><br><br>
-<input id="phonetic" placeholder="Phonetic Pronunciation"><br><br>
-<select id="league">
-  <option>NFL</option>
-  <option>NBA</option>
-  <option>MLB</option>
-</select><br><br>
+    <section id="player-setup">
+        <h2>Add a New Player</h2>
+        <input type="text" id="playerName" placeholder="Enter name...">
+        <button onclick="addPlayer()">Add Player</button>
+       
+        <ul id="playerList">
+            </ul>
+    </section>
 
-<input type="file" id="audio" accept="audio/*"><br><br>
-<button onclick="addPlayer()">Add Player</button>
-
-<h2>Directory</h2>
-<div id="players"></div>
-
-<script>
-let players = [];
-
-function addPlayer() {
-  const name = document.getElementById('name').value;
-  const phonetic = document.getElementById('phonetic').value;
-  const league = document.getElementById('league').value;
-  const file = document.getElementById('audio').files[0];
-
-  if (!name || !file) {
-    alert("Please enter a name and upload an audio file");
-    return;
-  }
-
-  const audioURL = URL.createObjectURL(file);
-  const player = { name, phonetic, league, audioURL };
-  players.push(player);
-
-  renderPlayers();
-}
-
-function renderPlayers() {
-  const container = document.getElementById('players');
-  container.innerHTML = '';
-
-  players.forEach(p => {
-    container.innerHTML += `
-      <div class="player">
-        <strong>${John McIntosh}</strong> (${NFL})<br>
-        <em>${MAC in Tosh}</em><br>
-        <audio controls src="${p.audioURL}"></audio>
-      </div>
-    `;
-  });
-}
-</script>
+    <script>
+        function addPlayer() {
+            // Finding the input box and the list in the HTML
+            const nameInput = document.getElementById('playerName');
+            const list = document.getElementById('playerList');
+           
+            // Checking if the box actually has a name in it
+            if (nameInput.value.trim() !== "") {
+                const newEntry = document.createElement('li'); // Create a list item
+                newEntry.textContent = nameInput.value;        // Put the name in it
+                list.appendChild(newEntry);                   // Add it to the list
+                nameInput.value = "";                         // Clear the box
+            }
+        }
+    </script>
 
 </body>
 </html>
-
