@@ -1,54 +1,378 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Player Site</title>
-    <style>
-        /* This is optional CSS to make it look a bit cleaner */
-        body { font-family: sans-serif; padding: 20px; }
-        #playerList { margin-top: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Names Directory</title>
+
+  <style>
+    :root {
+      /* Easy-to-edit dark theme colors */
+      --bg: #0b0d10;
+      --panel: #11161c;
+      --surface: #161c23;
+      --surface-2: #1b232d;
+      --text: #edf2f7;
+      --muted: #a8b3c2;
+      --border: #2a3440;
+      --accent: #4ea1ff;
+      --accent-strong: #79b8ff;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.75rem, 2.6vw, 2.35rem);
+      line-height: 1.15;
+    }
+
+    .intro {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field input::placeholder {
+      color: var(--muted);
+    }
+
+    .field input:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--accent-strong);
+      outline-offset: 2px;
+      border-color: var(--accent);
+    }
+
+    .help {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    button {
+      min-height: 48px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface-2);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
+
+    .status {
+      min-height: 1.5rem;
+      margin: 0 0 1rem;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow: auto; /* Horizontal scroll on small screens */
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: collapse;
+    }
+
+    caption {
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      background: #18202a;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .empty {
+      margin-top: 1rem;
+      padding: 14px 16px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 16px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .search-row {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <main class="page">
+    <section class="card" aria-labelledby="directoryTitle">
+      <h1 id="directoryTitle">Names Directory</h1>
+      <p class="intro">
+        Search by first name, last name, or pronunciation. All names are visible on
+        first load, and the list filters instantly as a visitor types.
+      </p>
 
-    <h1>My Website</h1>
+      <form id="searchForm" class="search-row" role="search" aria-labelledby="searchLabel">
+        <div class="field">
+          <label id="searchLabel" for="nameSearch">Quick search</label>
+          <input
+            id="nameSearch"
+            name="nameSearch"
+            type="search"
+            placeholder="Type any part of a first name, last name, or pronunciation"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="searchHelp"
+            aria-controls="namesTable"
+          />
+          <div id="searchHelp" class="help">
+            Example: john, mc, or mac. Press Escape or use Clear to reset the search.
+          </div>
+        </div>
 
-    <section id="player-setup">
-        <h2>Add a New Player</h2>
-        <input type="text" id="playerName" placeholder="Enter name...">
-        <button onclick="addPlayer()">Add Player</button>
-       
-        <ul id="playerList">
-            </ul>
+        <button type="button" id="clearSearch">Clear</button>
+      </form>
+
+      <p id="resultsCount" class="status" role="status" aria-live="polite" aria-atomic="true">
+        Loading names...
+      </p>
+
+      <div class="table-wrap">
+        <table id="namesTable">
+          <caption>Fixed list of 200 names</caption>
+          <thead>
+            <tr>
+              <th scope="col">First Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Pronunciation</th>
+            </tr>
+          </thead>
+          <tbody id="namesTbody"></tbody>
+        </table>
+      </div>
+
+      <p id="noResults" class="empty" hidden>
+        No names match your search. Try another spelling or clear the search box.
+      </p>
+
+      <noscript>
+        <p class="empty">
+          JavaScript is required for live filtering in this version.
+        </p>
+      </noscript>
     </section>
+  </main>
 
-    <script>
-        function addPlayer() {
-            // Finding the input box and the list in the HTML
-            const nameInput = document.getElementById('playerName');
-            const list = document.getElementById('playerList');
-           
-            // Checking if the box actually has a name in it
-            if (nameInput.value.trim() !== "") {
-                const newEntry = document.createElement('li'); // Create a list item
-                newEntry.textContent = nameInput.value;        // Put the name in it
-                list.appendChild(newEntry);                   // Add it to the list
-                nameInput.value = "";                         // Clear the box
-            }
-        }
-    </script>
-    <script>
-  function addPlayer() {
-    const nameInput = document.getElementById('playerName');
-    const list = document.getElementById('playerList');
-   
-    if (nameInput.value !== "") {
-      const newEntry = document.createElement('li');
-      newEntry.textContent = nameInput.value;
-      list.appendChild(newEntry);
-      nameInput.value = ""; // Clears the box after adding
+  <script>
+    // Change this number if you ever want to show more or fewer names.
+    const DISPLAY_LIMIT = 200;
+
+    // Replace these sample rows with your real data.
+    const names = [
+      { first: "John", last: "McIntosh", pronunciation: "Mac-in-Tosh" },
+      { first: "Sarah", last: "Nguyen", pronunciation: "NWIN" },
+      { first: "Michael", last: "Rivera", pronunciation: "ri-VAIR-uh" },
+      { first: "Ava", last: "Patel", pronunciation: "puh-TEL" },
+      { first: "David", last: "Kim", pronunciation: "KIM" },
+      { first: "Maria", last: "Lopez", pronunciation: "LOH-pez" },
+      { first: "James", last: "Carter", pronunciation: "KAR-ter" },
+      { first: "Emily", last: "Davis", pronunciation: "DAY-vis" },
+      { first: "Daniel", last: "Johnson", pronunciation: "JOHN-sun" },
+      { first: "Sophia", last: "Martinez", pronunciation: "mar-TEE-nez" }
+    ];
+
+    // Always render exactly 200 rows unless you change DISPLAY_LIMIT.
+    const workingNames = names.slice(0, DISPLAY_LIMIT);
+
+    // If you do not have all 200 real names yet, fill the rest with placeholders.
+    while (workingNames.length < DISPLAY_LIMIT) {
+      workingNames.push({
+        first: "John",
+        last: "McIntosh",
+        pronunciation: "Mac-in-Tosh"
+      });
     }
-  }
-</script>
-    
+
+    const tbody = document.getElementById("namesTbody");
+    const searchInput = document.getElementById("nameSearch");
+    const clearButton = document.getElementById("clearSearch");
+    const resultsCount = document.getElementById("resultsCount");
+    const noResults = document.getElementById("noResults");
+    const searchForm = document.getElementById("searchForm");
+
+    // Build one table row safely with textContent.
+    function createRow(person) {
+      const row = document.createElement("tr");
+
+      // Precompute searchable text for fast filtering.
+      row.dataset.search = `${person.first} ${person.last} ${person.pronunciation}`.toLowerCase();
+
+      const firstCell = document.createElement("td");
+      firstCell.textContent = person.first;
+
+      const lastCell = document.createElement("td");
+      lastCell.textContent = person.last;
+
+      const pronunciationCell = document.createElement("td");
+      pronunciationCell.textContent = person.pronunciation;
+
+      row.append(firstCell, lastCell, pronunciationCell);
+      return row;
+    }
+
+    const rows = workingNames.map(createRow);
+    const fragment = document.createDocumentFragment();
+    rows.forEach((row) => fragment.appendChild(row));
+    tbody.appendChild(fragment);
+
+    function updateResults(query) {
+      const trimmedQuery = query.trim();
+      const normalizedQuery = trimmedQuery.toLowerCase();
+      let visibleCount = 0;
+
+      for (const row of rows) {
+        const isMatch = row.dataset.search.includes(normalizedQuery);
+        row.hidden = !isMatch;
+        if (isMatch) visibleCount += 1;
+      }
+
+      const total = rows.length;
+
+      resultsCount.textContent = normalizedQuery
+        ? `Showing ${visibleCount} of ${total} names for "${trimmedQuery}".`
+        : `Showing ${total} of ${total} names.`;
+
+      noResults.hidden = visibleCount !== 0;
+    }
+
+    // Live search as the user types.
+    searchInput.addEventListener("input", (event) => {
+      updateResults(event.target.value);
+    });
+
+    // Clear button for mouse, touch, and keyboard users.
+    clearButton.addEventListener("click", () => {
+      searchInput.value = "";
+      updateResults("");
+      searchInput.focus();
+    });
+
+    // Escape key quickly clears the search box.
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && searchInput.value) {
+        searchInput.value = "";
+        updateResults("");
+        searchInput.focus();
+      }
+    });
+
+    // Prevent Enter from reloading the page.
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+
+    // Initial state.
+    updateResults("");
+  </script>
 </body>
 </html>
